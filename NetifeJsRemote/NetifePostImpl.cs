@@ -2,6 +2,7 @@
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Jering.Javascript.NodeJS;
+using Microsoft.Extensions.DependencyInjection;
 using NetifeJsRemote.Model;
 using NetifeMessage;
 

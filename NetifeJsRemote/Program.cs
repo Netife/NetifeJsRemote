@@ -5,13 +5,14 @@ using Jering.Javascript.NodeJS;
 using Microsoft.Extensions.DependencyInjection;
 using NetifeJsRemote;
 
-if (args.Length != 3)
-{
-    return;
-}
+//if (args.Length != 2)
+//{
+//    return;
+//}
 
 var services = new ServiceCollection();
 services.AddNodeJS();
+services.Configure<NodeJSProcessOptions>(op => op.Port = 7893);
 ServiceProvider serviceProvider = services.BuildServiceProvider(); 
 
 new Server
@@ -20,5 +21,6 @@ new Server
     {
         NetifeMessage.NetifePost.BindService(new NetifePostImpl(serviceProvider.GetRequiredService<INodeJSService>()))
     },
-    Ports = { new ServerPort(args[1], int.Parse(args[2]), ServerCredentials.Insecure) }
+    Ports = { new ServerPort("0.0.0.0", 7892, ServerCredentials.Insecure) }
 }.Start();
+Console.ReadLine();
