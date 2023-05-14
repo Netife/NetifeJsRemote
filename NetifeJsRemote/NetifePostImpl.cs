@@ -49,12 +49,20 @@ public class NetifePostImpl : NetifeMessage.NetifePost.NetifePostBase
     public override async Task<NetifeMessage.NetifeScriptCommandResponse> 
         UseScriptCommand(NetifeMessage.NetifeScriptCommandRequest request, ServerCallContext context)
     {
-        Request innerRequest = new Request();
-        NetifeMessage.NetifeProbeResponse probeResponse = new NetifeProbeResponse();
-        var res = await _nodeJsService.InvokeFromFileAsync<string>(
-            Path.Join(Path.Join("scripts","bin"), request.ScriptName + ".js"), request.ExportFunction, 
-            args: new[] { JsonSerializer.Serialize(request.Params) });
         var response = new NetifeScriptCommandResponse();
+        string res = String.Empty;
+        ;
+        if (request.ScriptName == "NetifeInstanceCalc")
+        {
+            res = await _nodeJsService.InvokeFromStringAsync<string>
+                (request.ExportFunction, args: new [] {JsonSerializer.Serialize(request.Params)  });
+            response.Result = res;
+            return response;
+        }
+        
+        res = await _nodeJsService.InvokeFromFileAsync<string>(
+            Path.Join(Path.Join("scripts","bin"), request.ScriptName + ".js"), request.ExportFunction, 
+            args: new [] { JsonSerializer.Serialize(request.Params) });
         response.Result = res;
         return response;
     }
