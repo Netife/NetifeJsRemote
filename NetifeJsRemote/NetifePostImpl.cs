@@ -45,4 +45,17 @@ public class NetifePostImpl : NetifeMessage.NetifePost.NetifePostBase
         probeResponse.ResponseText = res.ResponseText;
         return probeResponse;
     }
+    
+    public override async Task<NetifeMessage.NetifeScriptCommandResponse> 
+        UseScriptCommand(NetifeMessage.NetifeScriptCommandRequest request, ServerCallContext context)
+    {
+        Request innerRequest = new Request();
+        NetifeMessage.NetifeProbeResponse probeResponse = new NetifeProbeResponse();
+        var res = await _nodeJsService.InvokeFromFileAsync<string>(
+            Path.Join(Path.Join("scripts","bin"), request.ScriptName + ".js"), request.ExportFunction, 
+            args: new[] { JsonSerializer.Serialize(request.Params) });
+        var response = new NetifeScriptCommandResponse();
+        response.Result = res;
+        return response;
+    }
 }
